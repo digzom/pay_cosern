@@ -24,3 +24,5 @@ pay_cosern-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+.env

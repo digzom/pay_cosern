@@ -9,7 +9,8 @@ defmodule PayCosern.Router do
   end
 
   get "/bills" do
-    send_resp(conn, 200, Jason.encode!(%{tai: 1}))
+    data = PayCosern.get_data()
+    send_resp(conn, 200, Jason.encode!(data))
   end
 
   match _ do
