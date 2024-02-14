@@ -10,7 +10,7 @@ defmodule PayCosern do
   @url "https://servicos.neoenergiacosern.com.br/area-logada/Paginas/login.aspx"
   @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/2-via-conta.aspx"
 
-  def get_data() do
+  def dive() do
     {:ok, session} =
       Wallaby.start_session(
         chromedriver: [
@@ -73,16 +73,27 @@ defmodule PayCosern do
 
     table_data = Browser.find(iframe, Query.css(".neoNNtab00 td.neoNNtd01", count: :any))
 
-    table_data
-    |> Enum.map(fn data -> Element.text(data) end)
-    |> Enum.chunk_every(3)
-    |> Enum.filter(&(&1 != [""]))
-    |> Enum.map(fn list ->
-      IO.puts("Ta-da!! It's done!")
+    data =
+      table_data
+      |> Enum.map(fn data -> Element.text(data) end)
+      |> Enum.chunk_every(3)
+      |> Enum.filter(&(&1 != [""]))
+      |> Enum.map(fn list ->
+        IO.puts("Ta-da!! It's done!")
 
-      @keys
-      |> Enum.zip(list)
-      |> Enum.into(%{})
-    end)
+        @keys
+        |> Enum.zip(list)
+        |> Enum.into(%{})
+      end)
+
+    Mongo.insert_many(:mongo, "bills", data)
+
+    data
+  end
+
+  def get_bills do
+    :mongo
+    |> Mongo.find("bills", %{})
+    |> Enum.to_list()
   end
 end
