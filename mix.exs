@@ -37,7 +37,9 @@ defmodule PayCosern.MixProject do
       {:cowboy, "~>  2.9"},
       {:plug_cowboy, "~> 2.0"},
       {:jason, "~> 1.2.2"},
-      {:wallaby, "~> 0.30"}
+      {:wallaby, "~> 0.30"},
+      {:oban, "~> 2.16"},
+      {:mongodb_driver, "~> 1.4.0"}
     ]
   end
 end

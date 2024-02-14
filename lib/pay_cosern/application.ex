@@ -10,7 +10,8 @@ defmodule PayCosern.Application do
     children = [
       # Starts a worker by calling: PayCosern.Worker.start_link(arg)
       # {PayCosern.Worker, arg}
-      {Plug.Cowboy, scheme: :http, plug: PayCosern.Router, options: [port: 4000]}
+      {Plug.Cowboy, scheme: :http, plug: PayCosern.Router, options: [port: 4000]},
+      {Mongo, name: :mongo, database: "paycosern", pool_size: 2}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

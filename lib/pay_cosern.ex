@@ -24,7 +24,7 @@ defmodule PayCosern do
               "--headless",
               "--disable-gpu",
               "--disabled-software-rasterizer",
-              "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+              "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167 Safari/537.36",
               "--disable-blink-features=AutomationControlled"
             ]
           }
@@ -73,17 +73,15 @@ defmodule PayCosern do
 
     table_data = Browser.find(iframe, Query.css(".neoNNtab00 td.neoNNtd01", count: :any))
 
-    Enum.map(table_data, fn data ->
-      Element.text(data)
-    end)
+    table_data
+    |> Enum.map(fn data -> Element.text(data) end)
     |> Enum.chunk_every(3)
     |> Enum.filter(&(&1 != [""]))
     |> Enum.map(fn list ->
       IO.puts("Ta-da!! It's done!")
 
-      Enum.with_index(list, fn element, index ->
-        {Enum.at(@keys, index), element}
-      end)
+      @keys
+      |> Enum.zip(list)
       |> Enum.into(%{})
     end)
   end
