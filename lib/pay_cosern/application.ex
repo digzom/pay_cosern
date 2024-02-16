@@ -17,6 +17,15 @@ defmodule PayCosern.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: PayCosern.Supervisor]
-    Supervisor.start_link(children, opts)
+    supervisor = Supervisor.start_link(children, opts)
+    set_db_indexes()
+
+    supervisor
+  end
+
+  defp set_db_indexes do
+    indexes = [key: [reference_month: 1], name: "reference_month_index", unique: true]
+
+    Mongo.create_indexes(:mongo, "bills", indexes)
   end
 end

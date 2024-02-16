@@ -6,9 +6,9 @@ defmodule PayCosern do
   alias Wallaby.Query
   alias Wallaby.Element
 
-  @keys [:expiring_date, :reading_date, :amount]
+  @keys [:reference_month, :charged_period, :expiring_date, :amount, :status]
   @url "https://servicos.neoenergiacosern.com.br/area-logada/Paginas/login.aspx"
-  @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/2-via-conta.aspx"
+  @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/historicoconsumo.aspx"
 
   def dive() do
     {:ok, session} =
@@ -53,31 +53,26 @@ defmodule PayCosern do
     IO.puts("Visiting bills page...\n")
     Browser.visit(session, @bills_url)
 
-    IO.puts("Who the fuck uses iframe in 2024? Anyway, we found it.\n")
-    iframe = Browser.focus_frame(session, Query.css("iframe"))
-
-    IO.puts("Waiting for the iframe to load...")
-    :timer.sleep(3_000)
+    IO.puts("Waiting for this page to load... Let's wait some seconds.")
+    :timer.sleep(6_000)
 
     IO.puts("Yep, it's slow as fuck.")
+    :timer.sleep(4_000)
+
+    IO.puts("How's your family?")
     :timer.sleep(2_000)
 
-    IO.puts("3...")
+    IO.puts("I'm sure that you will never forget this shit again lol")
     :timer.sleep(1_000)
 
-    IO.puts("2...")
-    :timer.sleep(1_000)
-
-    IO.puts("1...")
-    :timer.sleep(1_000)
-
-    table_data = Browser.find(iframe, Query.css(".neoNNtab00 td.neoNNtd01", count: :any))
+    bills_data =
+      Browser.find(page, Query.css("#DataTables_Table_1 > tbody > tr > td", count: :any))
 
     data =
-      table_data
+      bills_data
       |> Enum.map(fn data -> Element.text(data) end)
-      |> Enum.chunk_every(3)
-      |> Enum.filter(&(&1 != [""]))
+      |> Enum.filter(&(&1 != ""))
+      |> Enum.chunk_every(5)
       |> Enum.map(fn list ->
         IO.puts("Ta-da!! It's done!")
 
@@ -85,8 +80,6 @@ defmodule PayCosern do
         |> Enum.zip(list)
         |> Enum.into(%{})
       end)
-
-    Mongo.insert_many(:mongo, "bills", data)
 
     data
   end
