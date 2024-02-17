@@ -2,11 +2,11 @@ Application.load(:wallaby)
 Application.put_env(:wallaby, :max_wait_time, 10_000)
 
 defmodule PayCosern do
+  require Logger
+  alias PayCosern.Utils.Extract
   alias Wallaby.Browser
   alias Wallaby.Query
-  alias Wallaby.Element
 
-  @keys [:reference_month, :charged_period, :expiring_date, :amount, :status]
   @url "https://servicos.neoenergiacosern.com.br/area-logada/Paginas/login.aspx"
   @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/historicoconsumo.aspx"
 
@@ -68,20 +68,15 @@ defmodule PayCosern do
     bills_data =
       Browser.find(page, Query.css("#DataTables_Table_1 > tbody > tr > td", count: :any))
 
-    data =
-      bills_data
-      |> Enum.map(fn data -> Element.text(data) end)
-      |> Enum.filter(&(&1 != ""))
-      |> Enum.chunk_every(5)
-      |> Enum.map(fn list ->
-        IO.puts("Ta-da!! It's done!")
+    with {:ok, parsed_data} <- Extract.parse_raw_data(bills_data),
+         {:ok, extracted_data} <- Extract.from_parsed_data(parsed_data) do
+      IO.puts("Ta-da!! It's done!")
 
-        @keys
-        |> Enum.zip(list)
-        |> Enum.into(%{})
-      end)
-
-    data
+      Mongo.insert_many(:mongo, "bills", extracted_data)
+    else
+      error ->
+        Logger.error(error)
+    end
   end
 
   def get_bills do
