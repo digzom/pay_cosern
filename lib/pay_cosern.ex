@@ -68,6 +68,8 @@ defmodule PayCosern do
     bills_data =
       Browser.find(page, Query.css("#DataTables_Table_1 > tbody > tr > td", count: :any))
 
+    Wallaby.Chrome.end_session(session)
+
     with {:ok, parsed_data} <- Extract.parse_raw_data(bills_data),
          {:ok, extracted_data} <- Extract.from_parsed_data(parsed_data) do
       IO.puts("Ta-da!! It's done!")

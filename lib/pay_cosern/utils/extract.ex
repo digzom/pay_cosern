@@ -1,4 +1,5 @@
 defmodule PayCosern.Utils.Extract do
+  require Logger
   alias Wallaby.Element
 
   @type parsed_data :: %{
@@ -13,23 +14,28 @@ defmodule PayCosern.Utils.Extract do
 
   @spec parse_raw_data(raw_data :: list()) :: parsed_data()
   def parse_raw_data(raw_data) do
-    raw_data
-    |> Enum.map(fn data -> Element.text(data) end)
-    |> Enum.filter(&(&1 != ""))
-    |> Enum.chunk_every(5)
-    |> Enum.map(fn list ->
-      @keys
-      |> Enum.zip(list)
-      |> Enum.into(%{})
-    end)
+    parsed_data =
+      raw_data
+      |> Enum.map(fn data -> Element.text(data) end)
+      |> Enum.filter(&(&1 != ""))
+      |> Enum.chunk_every(5)
+      |> Enum.map(fn list ->
+        @keys
+        |> Enum.zip(list)
+        |> Enum.into(%{})
+      end)
+
+    {:ok, parsed_data}
   end
 
   def from_parsed_data(parsed_data_list) do
-    Enum.map(parsed_data_list, fn parsed_data ->
+    extracted_data = Enum.map(parsed_data_list, fn parsed_data ->
       Map.new(parsed_data, fn {key, val} ->
-        apply(__MODULE__, key, [val])
+          {key, apply(__MODULE__, key, [val])}
       end)
     end)
+
+    {:ok, extracted_data}
   end
 
   @doc ~S"""
