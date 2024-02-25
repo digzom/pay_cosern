@@ -68,13 +68,11 @@ defmodule PayCosern do
     bills_data =
       Browser.find(page, Query.css("#DataTables_Table_1 > tbody > tr > td", count: :any))
 
-    Wallaby.Chrome.end_session(session)
-
     with {:ok, parsed_data} <- Extract.parse_raw_data(bills_data),
          {:ok, extracted_data} <- Extract.from_parsed_data(parsed_data) do
       IO.puts("Ta-da!! It's done!")
 
-      Mongo.insert_many(:mongo, "bills", extracted_data)
+      insert_many("bills", extracted_data) |> Enum.filter(&(not is_nil(&1)))
     else
       error ->
         Logger.error(error)
@@ -85,5 +83,21 @@ defmodule PayCosern do
     :mongo
     |> Mongo.find("bills", %{})
     |> Enum.to_list()
+  end
+
+  defp insert_many(schema, docs) do
+    Enum.map(docs, fn doc ->
+      if not exists?(doc, schema) do
+        Mongo.insert_one!(:mongo, schema, doc)
+      end
+    end)
+  end
+
+  defp exists?(doc, schema) do
+    if is_nil(Mongo.find_one(:mongo, schema, %{reference_month: doc[:reference_month]})) do
+      false
+    else
+      true
+    end
   end
 end

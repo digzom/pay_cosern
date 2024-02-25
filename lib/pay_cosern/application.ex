@@ -24,8 +24,11 @@ defmodule PayCosern.Application do
   end
 
   defp set_db_indexes do
-    indexes = [key: [reference_month: 1], name: "reference_month_index", unique: true]
+    indexes = [%{key: [reference_month: 1], name: "reference_month_index", unique: true}]
 
-    Mongo.create_indexes(:mongo, "bills", indexes)
+    case Mongo.create_indexes(:mongo, "bills", indexes) do
+      :ok -> IO.puts("Indexes created successfully.")
+      {:error, reason} -> IO.puts("Failed to create indexes: #{inspect(reason)}")
+    end
   end
 end

@@ -29,11 +29,12 @@ defmodule PayCosern.Utils.Extract do
   end
 
   def from_parsed_data(parsed_data_list) do
-    extracted_data = Enum.map(parsed_data_list, fn parsed_data ->
-      Map.new(parsed_data, fn {key, val} ->
+    extracted_data =
+      Enum.map(parsed_data_list, fn parsed_data ->
+        Map.new(parsed_data, fn {key, val} ->
           {key, apply(__MODULE__, key, [val])}
+        end)
       end)
-    end)
 
     {:ok, extracted_data}
   end

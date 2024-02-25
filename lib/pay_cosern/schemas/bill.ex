@@ -5,7 +5,7 @@ defmodule PayCosern.Schemas.Bill do
     attribute(:amount, Decimal.t())
     attribute(:charge_period, List.t())
     attribute(:due_to, DateTime.t())
-    attribute(:reference_month, DateTime.t())
+    attribute(:reference_month, String.t())
     attribute(:status, String.t())
     attribute(:paid_at, DateTime.t())
   end
