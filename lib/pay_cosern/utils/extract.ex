@@ -147,6 +147,7 @@ defmodule PayCosern.Utils.Extract do
   end
 
   def paid_at("ATRASADA"), do: nil
+  def paid_at("VIGENTE"), do: nil
 
   def paid_at(string) do
     string
