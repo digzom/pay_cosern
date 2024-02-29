@@ -11,10 +11,10 @@ primary_region = 'gru'
   buildpacks = ['https://cnb-shim.herokuapp.com/v1/hashnuke/elixir']
 
 [env]
-  PORT = '8080'
+  PORT = '4000'
 
 [http_service]
-  internal_port = 8080
+  internal_port = 4000
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
