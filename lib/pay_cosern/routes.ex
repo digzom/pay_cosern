@@ -9,7 +9,7 @@ defmodule PayCosern.Router do
   end
 
   get "/bills" do
-    data = PayCosern.get_bills()
+    data = PayCosern.dive()
 
     conn
     |> put_resp_header("content-type", "application/json")

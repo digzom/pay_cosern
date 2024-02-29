@@ -70,34 +70,10 @@ defmodule PayCosern do
 
     with {:ok, parsed_data} <- Extract.parse_raw_data(bills_data),
          {:ok, extracted_data} <- Extract.from_parsed_data(parsed_data) do
-      IO.puts("Ta-da!! It's done!")
-
-      insert_many("bills", extracted_data) |> Enum.filter(&(not is_nil(&1)))
+      extracted_data
     else
       error ->
         Logger.error(error)
-    end
-  end
-
-  def get_bills do
-    :mongo
-    |> Mongo.find("bills", %{})
-    |> Enum.to_list()
-  end
-
-  defp insert_many(schema, docs) do
-    Enum.map(docs, fn doc ->
-      if not exists?(doc, schema) do
-        Mongo.insert_one!(:mongo, schema, doc)
-      end
-    end)
-  end
-
-  defp exists?(doc, schema) do
-    if is_nil(Mongo.find_one(:mongo, schema, %{reference_month: doc[:reference_month]})) do
-      false
-    else
-      true
     end
   end
 end
