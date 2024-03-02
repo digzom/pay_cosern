@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for pay-cosern on 2024-02-28T21:40:03-03:00
+# fly.toml app configuration file generated for pay-cosern on 2024-03-01T04:54:05-03:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,14 +7,9 @@ app = 'pay-cosern'
 primary_region = 'gru'
 
 [build]
-  builder = 'heroku/buildpacks:20'
-  buildpacks = ['https://cnb-shim.herokuapp.com/v1/hashnuke/elixir']
-
-[env]
-  PORT = '4000'
 
 [http_service]
-  internal_port = 4000
+  internal_port = 8080
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
@@ -22,6 +17,6 @@ primary_region = 'gru'
   processes = ['app']
 
 [[vm]]
-  memory = '1gb'
+  memory = '512mb'
   cpu_kind = 'shared'
   cpus = 1
