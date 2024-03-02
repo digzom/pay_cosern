@@ -8,4 +8,4 @@ config :pay_cosern, PayCosern.Repo,
 config :wallaby,
   driver: Wallaby.Chrome
 
-config :wallaby, :chromedriver, binary: "/usr/local/bin/chromedriver"
+config :wallaby, :chromedriver, binary: "/usr/bin/chromedriver"

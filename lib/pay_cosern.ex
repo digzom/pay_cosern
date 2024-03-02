@@ -14,7 +14,7 @@ defmodule PayCosern do
     {:ok, session} =
       Wallaby.start_session(
         chromedriver: [
-          binary: "/usr/local/bin/chromedriver"
+          binary: "/usr/bin/chromedriver"
         ],
         capabilities: %{
           chromeOptions: %{
