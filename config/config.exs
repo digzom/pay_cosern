@@ -9,3 +9,6 @@ config :wallaby,
   driver: Wallaby.Chrome
 
 config :wallaby, :chromedriver, binary: "/usr/bin/chromedriver"
+
+config :pay_cosern,
+  ecto_repos: [PayCosern.Repo]
