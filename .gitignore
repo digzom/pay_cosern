@@ -26,3 +26,7 @@ pay_cosern-*.tar
 /tmp/
 
 .env
+
+# sqlite3 temp files
+paycosern-shm
+paycosern-wal
