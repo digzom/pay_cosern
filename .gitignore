@@ -30,3 +30,6 @@ pay_cosern-*.tar
 # sqlite3 temp files
 paycosern-shm
 paycosern-wal
+
+*.db
+*.db-*

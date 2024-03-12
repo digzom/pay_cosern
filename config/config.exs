@@ -2,6 +2,7 @@ import Config
 
 config :pay_cosern, PayCosern.Repo,
   database: "paycosern",
+  show_sensitive_data_on_connection_error: true,
   hostname: "localhost",
   port: 27017
 
