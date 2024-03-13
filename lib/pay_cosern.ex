@@ -10,29 +10,30 @@ defmodule PayCosern do
 
   @url "https://servicos.neoenergiacosern.com.br/area-logada/Paginas/login.aspx"
   @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/historicoconsumo.aspx"
+  @sixteen_hours 57_599_999_967
 
   def dive() do
-    {:ok, session} =
-      Wallaby.start_session(
-        chromedriver: [
-          binary: "/usr/bin/chromedriver"
-        ],
-        capabilities: %{
-          chromeOptions: %{
-            args: [
-              "--no-sandbox",
-              "window-size=1280,1000",
-              "--headless",
-              "--disable-gpu",
-              "--disabled-software-rasterizer",
-              "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167 Safari/537.36",
-              "--disable-blink-features=AutomationControlled"
-            ]
-          }
-        }
-      )
-
     try do
+      {:ok, session} =
+        Wallaby.start_session(
+          chromedriver: [
+            binary: "/usr/bin/chromedriver"
+          ],
+          capabilities: %{
+            chromeOptions: %{
+              args: [
+                "--no-sandbox",
+                "window-size=1280,1000",
+                "--headless",
+                "--disable-gpu",
+                "--disabled-software-rasterizer",
+                "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167 Safari/537.36",
+                "--disable-blink-features=AutomationControlled"
+              ]
+            }
+          }
+        )
+
       IO.puts("Visiting Cosern...\n")
 
       page = Browser.visit(session, @url)
@@ -113,10 +114,19 @@ defmodule PayCosern do
 
       error ->
         Logger.error(error)
-        raise error
 
         {:error, :something_gone_wrong,
          "the cosern website is experiencing some issues, sorry bro"}
+    end
+  end
+
+  def get_cosern_data() do
+    last_bill = PayCosern.Query.last_bill()
+
+    if Timex.diff(Timex.now(), last_bill.inserted_at) >= @sixteen_hours do
+      dive()
+    else
+      {:ok, PayCosern.Query.all_bills()}
     end
   end
 end
