@@ -7,10 +7,11 @@ defmodule PayCosern.Utils.Extract do
           amount: String.t(),
           charge_period: String.t(),
           reference_month: String.t(),
-          due_to: String.t()
+          due_to: String.t(),
+          paid_at: Date.t()
         }
 
-  @keys [:reference_month, :charge_period, :due_to, :amount, :status]
+  @keys [:reference_month, :charge_period, :due_to, :amount, :status, :paid_at]
 
   @spec parse_raw_data(raw_data :: list()) :: parsed_data()
   def parse_raw_data(raw_data) do
@@ -20,9 +21,15 @@ defmodule PayCosern.Utils.Extract do
       |> Enum.filter(&(&1 != ""))
       |> Enum.chunk_every(5)
       |> Enum.map(fn list ->
-        @keys
-        |> Enum.zip(list)
-        |> Enum.into(%{})
+        paid_at = List.last(list)
+        list = list ++ [paid_at]
+
+        asdf =
+          @keys
+          |> Enum.zip(list)
+          |> Enum.into(%{})
+
+        asdf
       end)
 
     {:ok, parsed_data}
@@ -136,6 +143,7 @@ defmodule PayCosern.Utils.Extract do
   end
 
   def status("ATRASADA"), do: "overdue"
+  def status("A VENCER"), do: "about_to_due"
   def status(_), do: "paid"
 
   def reference_month(date) do
@@ -147,7 +155,8 @@ defmodule PayCosern.Utils.Extract do
   end
 
   def paid_at("ATRASADA"), do: nil
-  def paid_at("VIGENTE"), do: nil
+  def paid_at("A VENCER"), do: nil
+  def paid_at(nil), do: nil
 
   def paid_at(string) do
     string

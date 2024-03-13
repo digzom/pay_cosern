@@ -6,6 +6,7 @@ defmodule PayCosern do
   alias PayCosern.Utils.Extract
   alias Wallaby.Browser
   alias Wallaby.Query
+  alias PayCosern.Repo.Bills
 
   @url "https://servicos.neoenergiacosern.com.br/area-logada/Paginas/login.aspx"
   @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/historicoconsumo.aspx"
@@ -33,20 +34,32 @@ defmodule PayCosern do
 
     try do
       IO.puts("Visiting Cosern...\n")
+
       page = Browser.visit(session, @url)
 
-      IO.puts("Entering the matrix...\n")
+      first_page_url = Browser.current_url(session)
+
+      IO.puts("Entering the matrix...")
+      IO.puts("URL: #{first_page_url}\n")
+
       login_input = Query.css(".cpfcnpj")
       password_input = Query.css(".password")
 
       Browser.fill_in(page, login_input, with: System.get_env("LOGIN"))
       Browser.fill_in(page, password_input, with: System.get_env("PASSWORD"))
 
-      IO.inspect(Browser.current_url(page))
       Browser.send_keys(page, [:enter])
 
       checkbox = Query.xpath("//input[@value='007007590371']")
-      IO.puts("We are inside.\n")
+
+      inside_url = Browser.current_url(session)
+
+      if inside_url != first_page_url do
+        IO.puts("We are inside.")
+        IO.puts("Current url: #{inside_url}\n")
+      else
+        IO.puts("Something wrong is happening. Check the cosern website manually.\n")
+      end
 
       found_checkbox = Browser.find(page, checkbox)
 
@@ -72,6 +85,22 @@ defmodule PayCosern do
 
       with {:ok, parsed_data} <- Extract.parse_raw_data(bills_data),
            {:ok, extracted_data} <- Extract.from_parsed_data(parsed_data) do
+        spawn(fn ->
+          Enum.each(extracted_data, fn data ->
+            inserted_data =
+              PayCosern.Repo.Bills.changeset(%Bills{}, data)
+              |> PayCosern.Repo.insert(on_conflict: :nothing)
+
+            case inserted_data do
+              {:ok, _inserted_data} ->
+                :ok
+
+              {:error, changeset} ->
+                Logger.error("Error when trying to insert: #{inspect(changeset)}")
+            end
+          end)
+        end)
+
         {:ok, extracted_data}
       else
         error ->
@@ -84,6 +113,7 @@ defmodule PayCosern do
 
       error ->
         Logger.error(error)
+        raise error
 
         {:error, :something_gone_wrong,
          "the cosern website is experiencing some issues, sorry bro"}

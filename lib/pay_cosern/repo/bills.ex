@@ -4,11 +4,11 @@ defmodule PayCosern.Repo.Bills do
 
   schema "bills" do
     field(:amount, :decimal)
-    field(:charge_period, {:array, :string})
-    field(:due_to, :utc_datetime)
+    field(:charge_period, {:array, :date})
+    field(:due_to, :date)
     field(:reference_month, :string)
     field(:status, :string)
-    field(:paid_at, :utc_datetime)
+    field(:paid_at, :date)
 
     timestamps()
   end
