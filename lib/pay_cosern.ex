@@ -10,7 +10,7 @@ defmodule PayCosern do
 
   @url "https://servicos.neoenergiacosern.com.br/area-logada/Paginas/login.aspx"
   @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/historicoconsumo.aspx"
-  @sixteen_hours 57_599_999_967
+  @sixteen_hours 16
 
   def dive() do
     try do
@@ -90,7 +90,7 @@ defmodule PayCosern do
           Enum.each(extracted_data, fn data ->
             inserted_data =
               PayCosern.Repo.Bills.changeset(%Bills{}, data)
-              |> PayCosern.Repo.insert(on_conflict: :nothing)
+              |> PayCosern.Repo.insert(on_conflict: [set: [updated_at: Timex.now()]])
 
             case inserted_data do
               {:ok, _inserted_data} ->
@@ -122,8 +122,9 @@ defmodule PayCosern do
 
   def get_cosern_data() do
     last_bill = PayCosern.Query.last_bill()
+    Logger.warning(Timex.diff(Timex.now(), last_bill.updated_at, :hours))
 
-    if Timex.diff(Timex.now(), last_bill.inserted_at) >= @sixteen_hours do
+    if Timex.diff(Timex.now(), last_bill.updated_at, :hours) >= @sixteen_hours do
       dive()
     else
       {:ok, PayCosern.Query.all_bills()}
