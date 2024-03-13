@@ -13,3 +13,14 @@ config :wallaby, :chromedriver, binary: "/usr/bin/chromedriver"
 
 config :pay_cosern,
   ecto_repos: [PayCosern.Repo]
+
+config :pay_cosern, Oban,
+  engine: Oban.Engines.Lite,
+  queues: [default: 10],
+  repo: PayCosern.Repo,
+  plugins: [
+    {Oban.Plugins.Cron,
+     crontab: [
+       {"@daily", PayCosern.Jobs.UpdateBills},
+     ]}
+  ]

@@ -11,14 +11,12 @@ defmodule PayCosern.Application do
       # Starts a worker by calling: PayCosern.Worker.start_link(arg)
       # {PayCosern.Worker, arg}
       {Plug.Cowboy, scheme: :http, plug: PayCosern.Router, options: [port: 4000]},
+      {Oban, Application.fetch_env!(:pay_cosern, Oban)},
       PayCosern.Repo
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: PayCosern.Supervisor]
-    supervisor = Supervisor.start_link(children, opts)
 
-    supervisor
+    Supervisor.start_link(children, opts)
   end
 end
