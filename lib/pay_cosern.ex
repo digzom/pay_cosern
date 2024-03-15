@@ -1,6 +1,3 @@
-Application.load(:wallaby)
-Application.put_env(:wallaby, :max_wait_time, 10_000)
-
 defmodule PayCosern do
   require Logger
   alias PayCosern.Utils.Extract
@@ -13,6 +10,9 @@ defmodule PayCosern do
   @sixteen_hours 16
 
   def dive() do
+    Application.put_env(:wallaby, :max_wait_time, 10_000)
+    Application.load(:wallaby)
+
     try do
       {:ok, session} =
         Wallaby.start_session(

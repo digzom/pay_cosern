@@ -9,7 +9,8 @@ config :pay_cosern, PayCosern.Repo,
 config :wallaby,
   driver: Wallaby.Chrome
 
-config :wallaby, :chromedriver, binary: "/usr/bin/chromedriver"
+config :wallaby, :chromedriver,
+  binary: "/usr/bin/chromedriver"
 
 config :pay_cosern,
   ecto_repos: [PayCosern.Repo]
@@ -21,6 +22,6 @@ config :pay_cosern, Oban,
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
-       {"0 3 * * *", PayCosern.Jobs.UpdateBills},
+       {"0 15 * * *", PayCosern.Jobs.UpdateBills},
      ]}
   ]

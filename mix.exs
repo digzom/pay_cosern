@@ -6,6 +6,11 @@ defmodule PayCosern.MixProject do
       app: :pay_cosern,
       version: "0.1.0",
       elixir: "~> 1.16.1",
+      releases: [
+        pay_cosern: [
+          applications: [ex_unit: :permanent]
+        ]
+      ],
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases()
@@ -37,7 +42,7 @@ defmodule PayCosern.MixProject do
       {:cowboy, "~>  2.9"},
       {:plug_cowboy, "~> 2.0"},
       {:jason, "~> 1.2.2"},
-      {:wallaby, "~> 0.30"},
+      {:wallaby, "~> 0.30", runtime: true},
       {:oban, "~> 2.16"},
       {:poolboy, "~> 1.5.2"},
       {:ecto_sqlite3, "~> 0.13"},

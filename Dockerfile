@@ -16,8 +16,11 @@ RUN mix local.hex --force && \
 WORKDIR /app
 COPY . .
 
+ENV MIX_ENV=prod
+
 RUN mix deps.get
 RUN mix compile
-RUN mix ecto.setup
+RUN mix release
 
-CMD ["mix", "run", "--no-halt"]
+# CMD ["mix", "run", "--no-halt"]
+CMD ["_build/prod/rel/pay_cosern/bin/pay_cosern", "start"]
