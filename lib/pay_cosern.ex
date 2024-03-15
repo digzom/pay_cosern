@@ -121,13 +121,15 @@ defmodule PayCosern do
   end
 
   def get_cosern_data() do
-    last_bill = PayCosern.Query.last_bill()
-    Logger.warning(Timex.diff(Timex.now(), last_bill.updated_at, :hours))
-
-    if Timex.diff(Timex.now(), last_bill.updated_at, :hours) >= @sixteen_hours do
+    with %{updated_at: updated_at} <- PayCosern.Query.last_bill(),
+         true <- Timex.diff(Timex.now(), updated_at, :hours) >= @sixteen_hours do
       dive()
     else
-      {:ok, PayCosern.Query.all_bills()}
+      nil ->
+        dive()
+
+      error ->
+        {:error, :something_wrong, error}
     end
   end
 end
