@@ -10,7 +10,22 @@ config :wallaby,
   driver: Wallaby.Chrome
 
 config :wallaby, :chromedriver,
-  binary: "/usr/bin/chromedriver"
+  binary: "/usr/bin/chromedriver",
+  chromedriver: [
+    capabilities: %{
+      chromeOptions: %{
+        args: [
+          "--no-sandbox",
+          "window-size=1280,1000",
+          "--headless",
+          "--disable-gpu",
+          "--disabled-software-rasterizer",
+          "--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.6167 Safari/537.36",
+          "--disable-blink-features=AutomationControlled"
+        ]
+      }
+    }
+  ]
 
 config :pay_cosern,
   ecto_repos: [PayCosern.Repo]
@@ -22,6 +37,6 @@ config :pay_cosern, Oban,
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
-       {"0 15 * * *", PayCosern.Jobs.UpdateBills},
+       {"0 15 * * *", PayCosern.Jobs.UpdateBills}
      ]}
   ]
