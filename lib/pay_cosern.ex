@@ -128,6 +128,9 @@ defmodule PayCosern do
       nil ->
         dive()
 
+      false ->
+        {:ok, PayCosern.Query.all_bills()}
+
       error ->
         {:error, :something_wrong, error}
     end
