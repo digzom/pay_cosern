@@ -90,7 +90,10 @@ defmodule PayCosern do
           Enum.each(extracted_data, fn data ->
             inserted_data =
               PayCosern.Repo.Bills.changeset(%Bills{}, data)
-              |> PayCosern.Repo.insert(on_conflict: [set: [updated_at: Timex.now()]])
+              |> PayCosern.Repo.insert(
+                on_conflict: [set: [updated_at: Timex.now()]],
+                conflict_target: :reference_month
+              )
 
             case inserted_data do
               {:ok, _inserted_data} ->
@@ -123,12 +126,19 @@ defmodule PayCosern do
   def get_cosern_data() do
     with %{updated_at: updated_at} <- PayCosern.Query.last_bill(),
          true <- Timex.diff(Timex.now(), updated_at, :hours) >= @sixteen_hours do
+      updated_at = updated_at |> Timex.format!("{0D}/{0M}/{YYYY}")
+
+      Logger.info("Last updated bills: #{updated_at}")
+      Logger.warning("==-=-=-=-=-=-== Diving into Cosern ==-=-=-=-=-=-==")
+
       dive()
     else
       nil ->
+        Logger.warning("No result was returned from database. Updating our data.")
         dive()
 
       false ->
+        Logger.info("Our data is updated. Returning all updated bills.")
         {:ok, PayCosern.Query.all_bills()}
 
       error ->
