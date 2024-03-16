@@ -23,7 +23,6 @@ defmodule PayCosern.Jobs.UpdateBills do
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         ~~~> Data is updated. Last bill reference month: #{reference_month}\n
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        )
       """)
 
       {:ok, :updated_data}
