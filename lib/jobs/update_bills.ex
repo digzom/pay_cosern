@@ -1,6 +1,6 @@
 defmodule PayCosern.Jobs.UpdateBills do
+  use Oban.Worker, max_attempts: 10
   require Logger
-  use Oban.Worker
   alias PayCosern.Repo.Bills
 
   def perform(_job) do
@@ -21,7 +21,7 @@ defmodule PayCosern.Jobs.UpdateBills do
       Logger.info("""
       \n
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ~~~> Data is updated. Last bill reference month: #{reference_month}\n
+        ---> Data is updated. Last bill reference month: #{reference_month}\n
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       """)
 
