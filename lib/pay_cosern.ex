@@ -7,7 +7,6 @@ defmodule PayCosern do
 
   @url "https://servicos.neoenergiacosern.com.br/area-logada/Paginas/login.aspx"
   @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/historicoconsumo.aspx"
-  @sixteen_hours 16
 
   def dive() do
     Application.put_env(:wallaby, :max_wait_time, 10_000)
@@ -124,25 +123,6 @@ defmodule PayCosern do
   end
 
   def get_cosern_data() do
-    with %{updated_at: updated_at} <- PayCosern.Query.last_bill(),
-         true <- Timex.diff(Timex.now(), updated_at, :hours) >= @sixteen_hours do
-      updated_at = updated_at |> Timex.format!("{0D}/{0M}/{YYYY}")
-
-      Logger.info("Last updated bills: #{updated_at}")
-      Logger.warning("==-=-=-=-=-=-== Diving into Cosern ==-=-=-=-=-=-==")
-
-      dive()
-    else
-      nil ->
-        Logger.warning("No result was returned from database. Updating our data.")
-        dive()
-
-      false ->
-        Logger.info("Our data is updated. Returning all updated bills.")
-        {:ok, PayCosern.Query.all_bills()}
-
-      error ->
-        {:error, :something_wrong, error}
-    end
+    PayCosern.Query.all_bills()
   end
 end

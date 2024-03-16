@@ -17,12 +17,25 @@ defmodule PayCosern.Router do
     send_resp(conn, 200, "<p style='font-size: 150px'>i'm alive!!!</p>")
   end
 
+  get "last_bill" do
+    last_bill = PayCosern.Query.last_bill()
+
+    conn
+    |> put_resp_header("content-type", "application/json")
+    |> send_resp(200, Jason.encode!(last_bill))
+  end
+
   get "/bills" do
     with {:ok, data} <- PayCosern.get_cosern_data() do
       conn
       |> put_resp_header("content-type", "application/json")
       |> send_resp(200, Jason.encode!(data))
     else
+      [] ->
+        conn
+        |> put_resp_header("content-type", "application/json")
+        |> send_resp(200, Jason.encode!([]))
+
       {:error, :cant_find_element, error_message} ->
         conn
         |> put_resp_header("content-type", "application/json")
