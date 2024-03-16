@@ -37,6 +37,6 @@ config :pay_cosern, Oban,
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [
-       {"0 15 * * *", PayCosern.Jobs.UpdateBills}
+       {"*/5 * * * *", PayCosern.Jobs.UpdateBills}
      ]}
   ]
