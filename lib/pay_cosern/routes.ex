@@ -26,11 +26,7 @@ defmodule PayCosern.Router do
   end
 
   get "/bills" do
-    with {:ok, data} <- PayCosern.get_cosern_data() do
-      conn
-      |> put_resp_header("content-type", "application/json")
-      |> send_resp(200, Jason.encode!(data))
-    else
+    case PayCosern.get_cosern_data() do
       [] ->
         conn
         |> put_resp_header("content-type", "application/json")
@@ -62,6 +58,11 @@ defmodule PayCosern.Router do
             error_message: message
           })
         )
+
+      data ->
+        conn
+        |> put_resp_header("content-type", "application/json")
+        |> send_resp(200, Jason.encode!(data))
     end
   end
 
