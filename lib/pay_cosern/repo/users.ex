@@ -12,10 +12,12 @@ defmodule PayCosern.Repo.Users do
     field :email, :string
   end
 
-  def changeset(user, params \\ %{}) do
+  def changeset(user, params) do
     user
-    |> cast(params, [:handle, :password_hash, :password, :email])
+    |> cast(params, [:handle, :password, :email])
     |> validate_required([:handle, :password, :email])
     |> unique_constraint(:handle)
   end
+
+  def changeset(params \\ %{}), do: changeset(%__MODULE__{}, params)
 end

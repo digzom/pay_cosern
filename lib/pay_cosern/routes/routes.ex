@@ -25,7 +25,11 @@ defmodule PayCosern.Router do
 
   get "/last_bill", do: to_action(PayCosern.Controllers.BillsController, :last_bill, conn)
   get "/bills", do: to_action(PayCosern.Controllers.BillsController, :bills, conn)
-  post "/authenticate", do: to_action(PayCosern.Controllers.BillsController, :authenticate, conn)
+  post "/authenticate", do: to_action(PayCosern.Controllers.AuthController, :sign_in, conn)
+
+  post "/create_account" do
+    to_action(PayCosern.Controllers.AuthController, :create_account, conn)
+  end
 
   match _ do
     send_resp(conn, 404, "not found")
@@ -33,9 +37,15 @@ defmodule PayCosern.Router do
 
   def to_action(module, action, %Conn{params: params} = conn) do
     {_, body, conn} = read_body(conn)
-    body = Jason.decode!(body)
+    body = decode_body(body)
     params = Map.merge(params, body)
 
     apply(module, action, [conn, params])
+  end
+
+  def decode_body(body) when body in [nil, "", false], do: %{}
+
+  def decode_body(body) do
+    Jason.decode!(body)
   end
 end
