@@ -1,4 +1,5 @@
 defmodule PayCosern.Repo.Bills do
+  alias PayCosern.Repo.CosernAccounts
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -11,6 +12,8 @@ defmodule PayCosern.Repo.Bills do
     field :reference_month, :string
     field :status, :string
     field :paid_at, :date
+
+    belongs_to :cosern_accounts, CosernAccounts
 
     timestamps()
   end

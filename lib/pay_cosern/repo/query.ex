@@ -15,4 +15,8 @@ defmodule PayCosern.Query do
   def user_by_id(id) do
     from(user in Users, where: user.id == ^id) |> one()
   end
+
+  def user_by_handle(handle) do
+    from(user in Users, where: user.handle == ^handle) |> one()
+  end
 end

@@ -1,5 +1,4 @@
 defmodule PayCosern.Repo.Users do
-  alias PayCosern.Repo.Bills
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -11,8 +10,6 @@ defmodule PayCosern.Repo.Users do
     field :password_hash, :string
     field :password, :string, virtual: true
     field :email, :string
-
-    has_many :bills, Bills
   end
 
   def changeset(user, params \\ %{}) do

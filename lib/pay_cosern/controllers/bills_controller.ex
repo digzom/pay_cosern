@@ -1,12 +1,6 @@
 defmodule PayCosern.Controllers.BillsController do
   import Plug.Conn
 
-  def authenticate(conn, params) do
-    conn
-    |> put_resp_header("content-type", "application/json")
-    |> send_resp(200, Jason.encode!(params))
-  end
-
   def last_bill(conn, _params) do
     last_bill = PayCosern.Query.last_bill()
 

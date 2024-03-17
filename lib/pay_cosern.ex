@@ -1,5 +1,6 @@
 defmodule PayCosern do
   require Logger
+  alias PayCosern.Repo.CosernAccounts
   alias PayCosern.Utils.Extract
   alias Wallaby.Browser
   alias Wallaby.Query
@@ -8,7 +9,7 @@ defmodule PayCosern do
   @url "https://servicos.neoenergiacosern.com.br/area-logada/Paginas/login.aspx"
   @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/historicoconsumo.aspx"
 
-  def dive() do
+  def dive(%CosernAccounts{} = cosern_account) do
     Application.put_env(:wallaby, :max_wait_time, 10_000)
     Application.load(:wallaby)
 
@@ -45,8 +46,8 @@ defmodule PayCosern do
       login_input = Query.css(".cpfcnpj")
       password_input = Query.css(".password")
 
-      Browser.fill_in(page, login_input, with: System.get_env("LOGIN"))
-      Browser.fill_in(page, password_input, with: System.get_env("PASSWORD"))
+      Browser.fill_in(page, login_input, with: cosern_account.login)
+      Browser.fill_in(page, password_input, with: cosern_account.password)
 
       Browser.send_keys(page, [:enter])
 
