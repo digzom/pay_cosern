@@ -1,23 +1,13 @@
-defmodule PayCosern.Router do
-  use Plug.Router
+defmodule PayCosern.Controllers.BillsController do
+  import Plug.Conn
 
-  plug(:match)
-  plug(:dispatch)
-
-  get "/" do
+  def authenticate(conn, params) do
     conn
-    |> put_resp_content_type("text/html")
-    |> send_resp(
-      200,
-      "<p style='font-size: 70px'>nothing to see here. Try to visit <a href='/bills'>/bills</a> to get the bills :)</p>"
-    )
+    |> put_resp_header("content-type", "application/json")
+    |> send_resp(200, Jason.encode!(params))
   end
 
-  get "/health" do
-    send_resp(conn, 200, "<p style='font-size: 150px'>i'm alive!!!</p>")
-  end
-
-  get "last_bill" do
+  def last_bill(conn, _params) do
     last_bill = PayCosern.Query.last_bill()
 
     conn
@@ -25,7 +15,7 @@ defmodule PayCosern.Router do
     |> send_resp(200, Jason.encode!(last_bill))
   end
 
-  get "/bills" do
+  def bills(conn, _params) do
     case PayCosern.get_cosern_data() do
       [] ->
         conn
@@ -64,9 +54,5 @@ defmodule PayCosern.Router do
         |> put_resp_header("content-type", "application/json")
         |> send_resp(200, Jason.encode!(data))
     end
-  end
-
-  match _ do
-    send_resp(conn, 404, "not found")
   end
 end
