@@ -40,3 +40,7 @@ config :pay_cosern, Oban,
        {"*/5 * * * *", PayCosern.Jobs.UpdateBills}
      ]}
   ]
+
+config :pay_cosern, PayCosern.Guardian,
+  issuer: "pay_cosern",
+  secret_key: System.get_env("GUARDIAN_SECRET")

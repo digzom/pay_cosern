@@ -68,6 +68,7 @@ defmodule PayCosern do
       IO.puts("Visiting bills page...\n")
       Browser.visit(session, @bills_url)
 
+
       IO.puts("Waiting for this page to load... Let's wait some seconds.")
       :timer.sleep(6_000)
 

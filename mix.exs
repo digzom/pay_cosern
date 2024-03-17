@@ -46,7 +46,8 @@ defmodule PayCosern.MixProject do
       {:oban, "~> 2.16"},
       {:poolboy, "~> 1.5.2"},
       {:ecto_sqlite3, "~> 0.13"},
-      {:timex, "~> 3.0"}
+      {:timex, "~> 3.0"},
+      {:guardian, "~> 2.3.2"}
     ]
   end
 end
