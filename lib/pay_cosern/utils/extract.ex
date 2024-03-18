@@ -1,6 +1,7 @@
 defmodule PayCosern.Utils.Extract do
   require Logger
   alias Wallaby.Element
+  alias PayCosern.Gleam
 
   @type parsed_data :: %{
           status: String.t(),
@@ -24,13 +25,12 @@ defmodule PayCosern.Utils.Extract do
         paid_at = List.last(list)
         list = list ++ [paid_at]
 
-        asdf =
-          @keys
-          |> Enum.zip(list)
-          |> Enum.into(%{})
-
-        asdf
+        @keys
+        |> Enum.zip(list)
+        |> Enum.into(%{})
+        |> Gleam.validate_structure()
       end)
+      |> Enum.filter(fn value -> {"ok", _} = value end)
 
     {:ok, parsed_data}
   end

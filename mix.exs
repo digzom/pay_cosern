@@ -1,16 +1,26 @@
 defmodule PayCosern.MixProject do
   use Mix.Project
 
+  @app_name :pay_cosern
+
   def project do
     [
       app: :pay_cosern,
       version: "0.1.0",
       elixir: "~> 1.16.1",
+      name: "#{@app_name}",
+      archives: [mix_gleam: "~> 0.6.2"],
+      compilers: [:gleam] ++ Mix.compilers(),
       releases: [
         pay_cosern: [
           applications: [ex_unit: :permanent]
         ]
       ],
+      erlc_paths: [
+        "build/dev/erlang/#{@app_name}/_gleam_artefacts"
+      ],
+      erlc_include_path: "biuld/dev/erlang/#{@app_name}/include",
+      prune_code_paths: false,
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases()
@@ -20,7 +30,8 @@ defmodule PayCosern.MixProject do
   defp aliases() do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"]
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "deps.get": ["deps.get", "gleam.deps.get"]
     ]
   end
 
@@ -48,7 +59,9 @@ defmodule PayCosern.MixProject do
       {:ecto_sqlite3, "~> 0.13"},
       {:timex, "~> 3.0"},
       {:argon2_elixir, "~> 4.0"},
-      {:guardian, "~> 2.3.2"}
+      {:guardian, "~> 2.3.2"},
+      {:gleam_stdlib, "~> 0.34 or ~> 1.0"},
+      {:gleeunit, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 end
