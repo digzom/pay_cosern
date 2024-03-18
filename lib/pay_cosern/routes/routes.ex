@@ -25,10 +25,14 @@ defmodule PayCosern.Router do
 
   get "/last_bill", do: to_action(PayCosern.Controllers.BillsController, :last_bill, conn)
   get "/bills", do: to_action(PayCosern.Controllers.BillsController, :bills, conn)
-  post "/authenticate", do: to_action(PayCosern.Controllers.AuthController, :sign_in, conn)
+  post "/sign_in", do: to_action(PayCosern.Controllers.AuthController, :create, conn)
 
-  post "/create_account" do
+  post "/service_account" do
     to_action(PayCosern.Controllers.AuthController, :create_account, conn)
+  end
+
+  post "/account" do
+    to_action(PayCosern.Controllers.AuthController, :create, conn)
   end
 
   match _ do

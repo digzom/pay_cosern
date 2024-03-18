@@ -4,7 +4,7 @@ defmodule PayCosern.Repo.CosernAccounts do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, except: [:__meta__]}
+  @derive {Jason.Encoder, except: [:__meta__, :users, :bills]}
 
   schema "cosern_accounts" do
     field :login, :string
@@ -13,11 +13,15 @@ defmodule PayCosern.Repo.CosernAccounts do
     has_many :bills, Bills
 
     belongs_to :users, Users
+
+    timestamps()
   end
 
-  def changeset(cosern_account, params \\ %{}) do
+  def changeset(params \\ %{}), do: changeset(%__MODULE__{}, params)
+
+  def changeset(cosern_account, params) do
     cosern_account
-    |> cast(params, [:login, :password])
+    |> cast(params, [:login, :password, :users_id])
     |> validate_required([:login, :password])
     |> unique_constraint(:login)
   end

@@ -27,7 +27,7 @@ defmodule PayCosern.Jobs.UpdateBills do
 
       {:ok, :updated_data}
     else
-      data = PayCosern.dive()
+      data = %{}
 
       case data do
         {:error, _reason, message} ->

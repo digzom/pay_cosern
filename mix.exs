@@ -47,6 +47,7 @@ defmodule PayCosern.MixProject do
       {:poolboy, "~> 1.5.2"},
       {:ecto_sqlite3, "~> 0.13"},
       {:timex, "~> 3.0"},
+      {:argon2_elixir, "~> 4.0"},
       {:guardian, "~> 2.3.2"}
     ]
   end
