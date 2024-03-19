@@ -1,4 +1,6 @@
 defmodule PayCosern.Guardian do
+  alias PayCosern.Query.Users
+  alias PayCosern.Repo
   use Guardian, otp_app: :my_app
 
   def subject_for_token(%{id: id}, _claims) do
@@ -11,7 +13,7 @@ defmodule PayCosern.Guardian do
   end
 
   def resource_from_claims(%{"sub" => id}) do
-    resource = PayCosern.Query.user_by_id(id)
+    resource = Repo.get(Users, id)
     {:ok, resource}
   end
 

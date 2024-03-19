@@ -9,8 +9,8 @@ defmodule PayCosern.Repo.Migrations.CreateBillsTable do
       add :reference_month, :string, null: false
       add :status, :string, null: false
       add :paid_at, :date
-
-      timestamps()
+      add :inserted_at, :text_datetime, null: false
+      add :updated_at, :text_datetime, null: false
     end
 
     create index("bills", :reference_month, unique: true)

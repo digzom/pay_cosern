@@ -12,7 +12,7 @@ defmodule PayCosern.Repo.CosernAccounts do
 
     has_many :bills, Bills
 
-    belongs_to :users, Users
+    many_to_many :users, Users, join_through: "users_cosern_accounts"
 
     timestamps()
   end

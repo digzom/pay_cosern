@@ -9,7 +9,7 @@ defmodule PayCosern do
   @url "https://servicos.neoenergiacosern.com.br/area-logada/Paginas/login.aspx"
   @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/historicoconsumo.aspx"
 
-  def dive(%CosernAccounts{} = cosern_account) do
+  def dive(%CosernAccounts{login: _login, password: _password, id: _id} = cosern_account) do
     Application.put_env(:wallaby, :max_wait_time, 10_000)
     Application.load(:wallaby)
 
@@ -69,7 +69,6 @@ defmodule PayCosern do
       IO.puts("Visiting bills page...\n")
       Browser.visit(session, @bills_url)
 
-
       IO.puts("Waiting for this page to load... Let's wait some seconds.")
       :timer.sleep(6_000)
 
@@ -89,6 +88,8 @@ defmodule PayCosern do
            {:ok, extracted_data} <- Extract.from_parsed_data(parsed_data) do
         spawn(fn ->
           Enum.each(extracted_data, fn data ->
+            data = Map.put(data, :cosern_accounts_id, cosern_account.id)
+
             inserted_data =
               PayCosern.Repo.Bills.changeset(%Bills{}, data)
               |> PayCosern.Repo.insert(
@@ -124,7 +125,7 @@ defmodule PayCosern do
     end
   end
 
-  def get_cosern_data() do
-    PayCosern.Query.all_bills()
+  def get_cosern_data(account_id) do
+    PayCosern.Query.CosernAccounts.last_bill(account_id)
   end
 end

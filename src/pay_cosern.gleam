@@ -1,5 +1,6 @@
 import gleam/list
 import gleam/dict
+import gleam/io
 
 pub fn validate_bill_structure(
   from dictionary: dict.Dict(String, String),
@@ -9,6 +10,8 @@ pub fn validate_bill_structure(
   ]
 
   let all_ok = list.all(keys, fn(key) { dict.has_key(dictionary, key) })
+
+  io.debug(all_ok)
 
   case all_ok {
     True -> #("ok", dictionary)

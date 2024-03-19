@@ -1,4 +1,5 @@
 defmodule PayCosern.Repo.Users do
+  alias PayCosern.Repo.CosernAccounts
   alias Ecto.Changeset
   use Ecto.Schema
   import Ecto.Changeset
@@ -12,6 +13,8 @@ defmodule PayCosern.Repo.Users do
     field :password_hash, :string
     field :password, :string, virtual: true
     field :email, :string
+
+    many_to_many :cosern_accounts, CosernAccounts, join_through: "users_cosern_accounts"
 
     timestamps()
   end

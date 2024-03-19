@@ -1,41 +1,27 @@
 defmodule PayCosern.Jobs.UpdateBills do
+  alias PayCosern.Repo.Query.CosernAccounts
+  alias PayCosern.Repo.Query.CosernAccounts
+  alias PayCosern.Repo.Query.CosernAccounts
+  alias PayCosern.Repo.CosernAccounts
   use Oban.Worker, max_attempts: 10
   require Logger
-  alias PayCosern.Repo.Bills
+  alias PayCosern.Repo
 
   def perform(_job) do
     Logger.info("\nRunning update_bills cronjob.\n")
 
-    today_reference_month = Timex.now() |> Timex.format!("{0M}/{YYYY}")
+    cosern_accounts = Repo.all(CosernAccounts)
 
-    reference_month =
-      case PayCosern.Query.last_bill() do
-        %Bills{reference_month: reference_month} ->
-          reference_month
-
-        something ->
-          something
-      end
-
-    if today_reference_month == reference_month do
-      Logger.info("""
-      \n
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ---> Data is updated. Last bill reference month: #{reference_month}\n
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      """)
-
-      {:ok, :updated_data}
-    else
-      data = %{}
+    Enum.map(cosern_accounts, fn %CosernAccounts{} = cosern_account ->
+      data = PayCosern.dive(cosern_account)
 
       case data do
         {:error, _reason, message} ->
           {:error, message}
 
         data ->
-          data
+          {:ok, data}
       end
-    end
+    end)
   end
 end

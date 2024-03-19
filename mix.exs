@@ -19,9 +19,8 @@ defmodule PayCosern.MixProject do
       erlc_paths: [
         "build/dev/erlang/#{@app_name}/_gleam_artefacts"
       ],
-      erlc_include_path: "biuld/dev/erlang/#{@app_name}/include",
+      erlc_include_path: "build/dev/erlang/#{@app_name}/include",
       prune_code_paths: false,
-      start_permanent: Mix.env() == :prod,
       deps: deps(),
       aliases: aliases()
     ]

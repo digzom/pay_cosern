@@ -5,9 +5,8 @@ defmodule PayCosern.Repo.Migrations.CreateCosernAccountTable do
     create table("cosern_accounts") do
       add :login, :string, null: false
       add :password, :string, null: false
-      add :users_id, references(:users), null: false
-
-      timestamps()
+      add :inserted_at, :text_datetime, null: false
+      add :updated_at, :text_datetime, null: false
     end
   end
 end

@@ -8,8 +8,8 @@ defmodule PayCosern.Repo.Migrations.CreateUsersTable do
       add :handle, :string, null: false
       add :password_hash, :string, null: false
       add :email, :string
-
-      timestamps()
+      add :inserted_at, :text_datetime, null: false
+      add :updated_at, :text_datetime, null: false
     end
 
     create index("users", :handle, unique: true)
