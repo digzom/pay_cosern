@@ -1,5 +1,6 @@
 defmodule PayCosern do
   require Logger
+  alias PayCosern.Repo
   alias PayCosern.Repo.CosernAccounts
   alias PayCosern.Utils.Extract
   alias Wallaby.Browser
@@ -125,7 +126,11 @@ defmodule PayCosern do
     end
   end
 
-  def get_cosern_data(account_id) do
-    PayCosern.Query.CosernAccounts.last_bill(account_id)
+  def get_all_bills(account_id) do
+    PayCosern.Query.CosernAccounts.bills(account_id) |> Repo.all()
+  end
+
+  def get_last_bill(account_id) do
+    PayCosern.Query.CosernAccounts.last_bill(account_id) |> Repo.one()
   end
 end
