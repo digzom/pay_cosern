@@ -5,4 +5,8 @@ defmodule PayCosern.Query.Bills do
   def last_bill() do
     from(b in Bills, order_by: [desc: :inserted_at], limit: 1)
   end
+
+  def bills() do
+    from(b in Bills, order_by: [desc: :inserted_at])
+  end
 end

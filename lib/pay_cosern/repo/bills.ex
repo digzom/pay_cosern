@@ -3,8 +3,6 @@ defmodule PayCosern.Repo.Bills do
   use Ecto.Schema
   import Ecto.Changeset
 
-  # @derive {Jason.Encoder, except: [:__meta__]}
-
   schema "bills" do
     field :amount, :decimal
     field :charge_period, {:array, :date}

@@ -39,8 +39,10 @@ defmodule PayCosern.Router do
     send_resp(conn, 404, "not found")
   end
 
-  def to_action(module, action, %Conn{params: params} = conn) do
+  def to_action(module, action, conn) do
     {_, body, conn} = read_body(conn)
+    %Conn{params: params} = conn = fetch_query_params(conn)
+
     body = decode_body(body)
     params = Map.merge(params, body)
 

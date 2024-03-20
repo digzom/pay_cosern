@@ -2,7 +2,7 @@ defmodule PayCosern.Controllers.BillsController do
   import Plug.Conn
 
   def last_bill(conn, %{"account_id" => account_id}) do
-    last_bill = PayCosern.Query.CosernAccounts.last_bill(account_id)
+    last_bill = PayCosern.get_last_bill(account_id)
 
     conn
     |> put_resp_header("content-type", "application/json")
@@ -10,7 +10,7 @@ defmodule PayCosern.Controllers.BillsController do
   end
 
   def bills(conn, %{"account_id" => account_id}) do
-    case PayCosern.get_cosern_data(account_id) do
+    case PayCosern.get_all_bills(account_id) do
       [] ->
         conn
         |> put_resp_header("content-type", "application/json")
@@ -48,5 +48,9 @@ defmodule PayCosern.Controllers.BillsController do
         |> put_resp_header("content-type", "application/json")
         |> send_resp(200, Jason.encode!(data))
     end
+  end
+
+  def bills(conn, _) do
+    conn |> put_resp_header("content-type", "text/plain") |> send_resp(404, "nothing to see here")
   end
 end
