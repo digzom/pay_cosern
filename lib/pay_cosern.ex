@@ -1,5 +1,7 @@
 defmodule PayCosern do
   require Logger
+  alias PayCosern.Repo.Users
+  alias PayCosern.Query.CosernAccounts
   alias PayCosern.Repo
   alias PayCosern.Repo.CosernAccounts
   alias PayCosern.Utils.Extract
@@ -10,6 +12,14 @@ defmodule PayCosern do
   @url "https://servicos.neoenergiacosern.com.br/area-logada/Paginas/login.aspx"
   @bills_url "https://servicos.neoenergiacosern.com.br/servicos-ao-cliente/Pages/historicoconsumo.aspx"
 
+  @doc """
+  The dive function executes the crawler, going into the cosern website and looking for the
+  history session to get all the bills.
+
+  If a bill is already at the database (using the reference month as reference), it will update
+  the field `status` and `updated_at`.
+  """
+  @spec dive(cosern_account :: CosernAccounts.t()) :: {:ok, map()} | {:error, Ecto.Changeset.t()}
   def dive(%CosernAccounts{login: _login, password: _password, id: _id} = cosern_account) do
     Application.put_env(:wallaby, :max_wait_time, 10_000)
     Application.load(:wallaby)
@@ -94,7 +104,7 @@ defmodule PayCosern do
             inserted_data =
               PayCosern.Repo.Bills.changeset(%Bills{}, data)
               |> PayCosern.Repo.insert(
-                on_conflict: [set: [updated_at: Timex.now()]],
+                on_conflict: [set: [updated_at: Timex.now(), status: data.status]],
                 conflict_target: :reference_month
               )
 
@@ -126,11 +136,40 @@ defmodule PayCosern do
     end
   end
 
+  @doc """
+  This function get's all bills of a given cosern account.
+  """
+  @spec get_all_bills(account_id :: String.t()) :: list(map())
   def get_all_bills(account_id) do
     PayCosern.Query.CosernAccounts.bills(account_id) |> Repo.all()
   end
 
+  @doc """
+  This function get's the last bill of given cosern account.
+  """
+  @spec get_last_bill(account_id :: String.t()) :: map()
   def get_last_bill(account_id) do
     PayCosern.Query.CosernAccounts.last_bill(account_id) |> Repo.one()
+  end
+
+  @doc """
+  This function get's the user using it's handle and returns the struct with the
+  cosern accounts preloaded.
+  """
+  @spec get_user_by_handle_with_accounts(handle :: String.t()) :: Users.t()
+  def get_user_by_handle_with_accounts(handle) do
+    Repo.get_by(Users, handle: handle) |> Repo.preload(:cosern_accounts)
+  end
+
+  @doc """
+  This function creates the association between an existing user and cosern account
+  that will be inserted or updated in the database.
+  """
+  @spec create_users_cosern_accounts_assoc(user :: Users.t(), cosern_account_candidate :: map()) ::
+          {:ok, updated_data}
+  def create_users_cosern_accounts_assoc(user, cosern_account) do
+    user
+    |> PayCosern.Repo.Users.changeset(%{})
+    |> Ecto.Changeset.put_assoc(:cosern_accounts, struct(CosernAccounts, cosern_account))
   end
 end

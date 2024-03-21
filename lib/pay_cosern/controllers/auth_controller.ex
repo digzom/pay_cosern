@@ -6,14 +6,10 @@ defmodule PayCosern.Controllers.AuthController do
   alias PayCosern.Repo.Users, as: User
 
   def create_account(conn, %{"login" => login, "password" => password, "handle" => handle}) do
-    with %User{id: _user_id} = user <-
-           Repo.get_by(User, handle: handle) |> PayCosern.Repo.preload(:cosern_accounts),
-         %User{id: _user_id} = user <- PayCosern.Repo.preload(user, :cosern_accounts),
+    with %User{id: _user_id} = user <- PayCosern.get_user_by_handle_with_accounts(handle),
          %Changeset{changes: _changes} = changeset <- PayCosern.Repo.Users.changeset(user, %{}),
-         %Changeset{changes: _changes} = assoc_changeset <-
-           Ecto.Changeset.put_assoc(changeset, :cosern_accounts, [
-             %CosernAccounts{login: login, password: password}
-           ]),
+         %Changeset{changes: _changes} =
+           PayCosern.create_users_cosern_accounts_assoc(user, %{login: login, password: password}),
          {:ok, inserted_data} <- Repo.update(assoc_changeset) do
       conn
       |> put_resp_header("content-type", "application/json")

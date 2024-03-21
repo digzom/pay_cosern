@@ -2,12 +2,13 @@ defmodule PayCosern.Repo.Users do
   alias PayCosern.Repo.CosernAccounts
   alias Ecto.Changeset
   use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
   import Ecto.UUID, only: [generate: 0]
 
   @derive {Jason.Encoder, except: [:__meta__, :password_hash, :password, :id]}
 
-  schema "users" do
+  typed_schema "users" do
     field :external_id, :binary_id
     field :handle, :string
     field :password_hash, :string

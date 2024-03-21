@@ -60,7 +60,8 @@ defmodule PayCosern.MixProject do
       {:argon2_elixir, "~> 4.0"},
       {:guardian, "~> 2.3.2"},
       {:gleam_stdlib, "~> 0.34 or ~> 1.0"},
-      {:gleeunit, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:gleeunit, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:typed_ecto_schema, "~> 0.4.1", runtime: false}
     ]
   end
 end

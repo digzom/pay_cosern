@@ -2,11 +2,12 @@ defmodule PayCosern.Repo.CosernAccounts do
   alias PayCosern.Repo.Bills
   alias PayCosern.Repo.Users
   use Ecto.Schema
+  use TypedEctoSchema
   import Ecto.Changeset
 
   @derive {Jason.Encoder, except: [:__meta__, :users, :bills]}
 
-  schema "cosern_accounts" do
+  typed_schema "cosern_accounts" do
     field :login, :string
     field :password, :string, redact: true
 
