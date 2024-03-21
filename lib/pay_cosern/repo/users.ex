@@ -5,7 +5,7 @@ defmodule PayCosern.Repo.Users do
   import Ecto.Changeset
   import Ecto.UUID, only: [generate: 0]
 
-  @derive {Jason.Encoder, except: [:__meta__]}
+  @derive {Jason.Encoder, except: [:__meta__, :password_hash, :password, :id]}
 
   schema "users" do
     field :external_id, :binary_id
@@ -19,7 +19,9 @@ defmodule PayCosern.Repo.Users do
     timestamps()
   end
 
-  def changeset(user, params) do
+  def changeset_for_actions(params \\ %{}), do: changeset_for_actions(%__MODULE__{}, params)
+
+  def changeset_for_actions(user, %{"password" => _password} = params) do
     user
     |> cast(params, [:handle, :password, :email])
     |> validate_required([:handle, :password, :email])
@@ -29,6 +31,12 @@ defmodule PayCosern.Repo.Users do
   end
 
   def changeset(params \\ %{}), do: changeset(%__MODULE__{}, params)
+
+  def changeset(user, params) do
+    user
+    |> cast(params, [:handle, :email])
+    |> validate_required([:handle, :email])
+  end
 
   def put_external_id(changeset), do: put_change(changeset, :external_id, generate())
 

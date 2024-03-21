@@ -19,10 +19,12 @@ defmodule PayCosern.Repo.CosernAccounts do
 
   def changeset(params \\ %{}), do: changeset(%__MODULE__{}, params)
 
-  def changeset(cosern_account, params) do
+  def changeset(cosern_account, %{user: user} = params) do
     cosern_account
-    |> cast(params, [:login, :password, :users_id])
+    |> cast(params, [:login, :password])
+    |> cast_assoc(:users)
     |> validate_required([:login, :password])
     |> unique_constraint(:login)
+    |> put_change(:users, [user])
   end
 end

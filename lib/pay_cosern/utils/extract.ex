@@ -28,9 +28,11 @@ defmodule PayCosern.Utils.Extract do
         @keys
         |> Enum.zip(list)
         |> Enum.into(%{})
+
         # |> Gleam.validate_structure()
       end)
-      # |> Enum.filter(fn value -> {"ok", _} = value end)
+
+    # |> Enum.filter(fn value -> {"ok", _} = value end)
 
     {:ok, parsed_data}
   end
