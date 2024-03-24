@@ -19,7 +19,7 @@ defmodule PayCosern do
   If a bill is already at the database (using the reference month as reference), it will update
   the field `status` and `updated_at`.
   """
-  @spec dive(cosern_account :: CosernAccounts.t()) :: {:ok, map()} | {:error, Ecto.Changeset.t()}
+  @spec dive(cosern_account :: CosernAccounts.t()) :: {:ok, any()} | {:error, Ecto.Changeset.t()}
   def dive(%CosernAccounts{login: _login, password: _password, id: _id} = cosern_account) do
     Application.put_env(:wallaby, :max_wait_time, 10_000)
     Application.load(:wallaby)
@@ -139,7 +139,7 @@ defmodule PayCosern do
   @doc """
   This function get's all bills of a given cosern account.
   """
-  @spec get_all_bills(account_id :: String.t()) :: list(map())
+  @spec get_all_bills(account_id :: String.t()) :: list(map()) | tuple()
   def get_all_bills(account_id) do
     PayCosern.Query.CosernAccounts.bills(account_id) |> Repo.all()
   end
@@ -166,7 +166,7 @@ defmodule PayCosern do
   that will be inserted or updated in the database.
   """
   @spec create_users_cosern_accounts_assoc(user :: Users.t(), cosern_account_candidate :: map()) ::
-          {:ok, updated_data :: Ecto.Changeset.t()} | {:error, changeset :: Ecto.Changeset.t()}
+          Ecto.Changeset.t()
   def create_users_cosern_accounts_assoc(user, cosern_account) do
     params = %{"cosern_accounts" => [cosern_account]}
 

@@ -12,16 +12,21 @@ defmodule PayCosern.Jobs.UpdateBills do
 
     cosern_accounts = Repo.all(CosernAccounts)
 
-    Enum.map(cosern_accounts, fn %CosernAccounts{} = cosern_account ->
-      data = PayCosern.dive(cosern_account)
+    asdf =
+      Enum.map(cosern_accounts, fn %CosernAccounts{} = cosern_account ->
+        PayCosern.dive(cosern_account)
+      end)
 
-      case data do
-        {:error, _reason, message} ->
-          {:error, message}
+    if Enum.all?(asdf, fn
+         {:ok, _value} ->
+           true
 
-        data ->
-          {:ok, data}
-      end
-    end)
+         {:error, _value} ->
+           false
+       end) do
+      :ok
+    else
+      :error
+    end
   end
 end

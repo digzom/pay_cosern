@@ -18,9 +18,6 @@ defmodule PayCosern.Controllers.AuthController do
       |> put_resp_header("content-type", "application/json")
       |> send_resp(200, Jason.encode!(inserted_data))
     else
-      asdf when is_map(asdf) ->
-        :fdu
-
       nil ->
         error =
           Utils.ErrorHandler.bad_request("O handle não pode conectar-se com esta conta.", %{
@@ -34,14 +31,14 @@ defmodule PayCosern.Controllers.AuthController do
           Jason.encode!(error)
         )
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      %Ecto.Changeset{valid?: false} = changeset ->
         errors = PayCosern.Utils.ErrorHandler.bad_request(changeset)
 
         conn
         |> put_resp_header("content-type", "application/json")
         |> send_resp(200, Jason.encode!(%{errors: errors}))
 
-      {:error, data} ->
+      data ->
         raise FunctionClauseError.message(data)
         errors = PayCosern.Utils.ErrorHandler.internal(message: "something_bad_happened")
 

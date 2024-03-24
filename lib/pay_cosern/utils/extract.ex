@@ -14,7 +14,7 @@ defmodule PayCosern.Utils.Extract do
 
   @keys [:reference_month, :charge_period, :due_to, :amount, :status, :paid_at]
 
-  @spec parse_raw_data(raw_data :: list()) :: parsed_data()
+  @spec parse_raw_data(raw_data :: list()) :: {:ok, any()}
   def parse_raw_data(raw_data) do
     parsed_data =
       raw_data
@@ -29,6 +29,7 @@ defmodule PayCosern.Utils.Extract do
         |> Enum.zip(list)
         |> Enum.into(%{})
 
+        # we have to do this to validate the structure and make sure of the type
         # |> Gleam.validate_structure()
       end)
 
