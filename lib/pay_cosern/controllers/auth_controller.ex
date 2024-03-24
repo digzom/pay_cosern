@@ -18,6 +18,9 @@ defmodule PayCosern.Controllers.AuthController do
       |> put_resp_header("content-type", "application/json")
       |> send_resp(200, Jason.encode!(inserted_data))
     else
+      asdf when is_map(asdf) ->
+        :fdu
+
       nil ->
         error =
           Utils.ErrorHandler.bad_request("O handle não pode conectar-se com esta conta.", %{
@@ -55,6 +58,11 @@ defmodule PayCosern.Controllers.AuthController do
       |> put_resp_header("content-type", "application/json")
       |> send_resp(200, Jason.encode!(data))
     else
+      nil ->
+        conn
+        |> put_resp_header("content-type", "application/json")
+        |> send_resp(400, Jason.encode!(%{}))
+
       {:error, changeset} ->
         errors = PayCosern.Utils.ErrorHandler.bad_request(changeset)
 
@@ -72,6 +80,11 @@ defmodule PayCosern.Controllers.AuthController do
       |> put_resp_header("content-type", "application/json")
       |> send_resp(200, Jason.encode!(updated_user))
     else
+      nil ->
+        conn
+        |> put_resp_header("content-type", "application/json")
+        |> send_resp(400, Jason.encode!(%{}))
+
       %Ecto.Changeset{} = changeset ->
         errors = Utils.ErrorHandler.bad_request(changeset)
 

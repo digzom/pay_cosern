@@ -2,7 +2,7 @@ defmodule PayCosern.Utils.ErrorHandler do
   @derive {Jason.Encoder, only: [:code, :message, :bad_data]}
   defexception [:code, :message, :bad_data]
 
-  @type status_code :: 400 | 500 | 401 | 403
+  @type status_code :: 400 | 500 | 401 | 403 | 404
   @type t :: %__MODULE__{code: status_code(), message: String.t(), bad_data: map()}
 
   @spec new(code :: status_code(), message :: String.t(), bad_data :: map()) ::
@@ -11,9 +11,14 @@ defmodule PayCosern.Utils.ErrorHandler do
     %__MODULE__{code: code, message: message, bad_data: Map.new(bad_data)}
   end
 
-  @spec not_found(message :: String.t(), bad_data :: map() | nil) :: __MODULE__.t()
-  def not_found(message, bad_data \\ %{}) do
+  @spec not_found(message :: String.t(), bad_data :: map()) :: __MODULE__.t()
+  def not_found(message, bad_data) when is_binary(message) and is_map(bad_data) do
     new(404, message, bad_data)
+  end
+
+  @spec not_found(message :: String.t(), bad_data :: map()) :: {:error, :invalid_data}
+  def not_found(_message, _bad_data) do
+    {:error, :invalid_data}
   end
 
   @spec bad_request(changeset :: Ecto.Changeset.t()) :: __MODULE__.t()
@@ -22,13 +27,13 @@ defmodule PayCosern.Utils.ErrorHandler do
 
     new(400, "bad_request_bro", bad_data)
   end
-
+  
   @spec bad_request(message :: String.t(), bad_data :: map() | nil) :: __MODULE__.t()
   def bad_request(message, bad_data) do
     new(400, message, bad_data)
   end
-
-  @spec internal(message :: String.t()) :: __MODULE__.t()
+  
+  @spec internal(message: message :: String.t()) :: __MODULE__.t()
   def internal(message: message) do
     new(500, message, %{})
   end

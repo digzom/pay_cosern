@@ -156,7 +156,7 @@ defmodule PayCosern do
   This function get's the user using it's handle and returns the struct with the
   cosern accounts preloaded.
   """
-  @spec get_user_by_handle_with_accounts(handle :: String.t()) :: Users.t()
+  @spec get_user_by_handle_with_accounts(handle :: String.t()) :: Users.t() | nil
   def get_user_by_handle_with_accounts(handle) do
     Repo.get_by(Users, handle: handle) |> Repo.preload(:cosern_accounts)
   end
@@ -166,7 +166,7 @@ defmodule PayCosern do
   that will be inserted or updated in the database.
   """
   @spec create_users_cosern_accounts_assoc(user :: Users.t(), cosern_account_candidate :: map()) ::
-          {:ok, updated_data :: Ecto.Changeset.t()}
+          {:ok, updated_data :: Ecto.Changeset.t()} | {:error, changeset :: Ecto.Changeset.t()}
   def create_users_cosern_accounts_assoc(user, cosern_account) do
     params = %{"cosern_accounts" => [cosern_account]}
 
