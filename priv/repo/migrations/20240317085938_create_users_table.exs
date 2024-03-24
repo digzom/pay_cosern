@@ -13,5 +13,6 @@ defmodule PayCosern.Repo.Migrations.CreateUsersTable do
     end
 
     create index("users", :handle, unique: true)
+    create index("users", :email, unique: true)
   end
 end

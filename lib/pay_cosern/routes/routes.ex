@@ -31,6 +31,10 @@ defmodule PayCosern.Router do
     to_action(PayCosern.Controllers.AuthController, :create_account, conn)
   end
 
+  delete "/service_account" do
+    to_action(PayCosern.Controllers.AuthController, :delete, conn)
+  end
+
   post "/account" do
     to_action(PayCosern.Controllers.AuthController, :create, conn)
   end

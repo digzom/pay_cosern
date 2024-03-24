@@ -1,4 +1,5 @@
 defmodule PayCosern.Repo.Users do
+  alias PayCosern.Repo
   alias PayCosern.Repo.CosernAccounts
   alias Ecto.Changeset
   use Ecto.Schema
@@ -15,18 +16,29 @@ defmodule PayCosern.Repo.Users do
     field :password, :string, virtual: true
     field :email, :string
 
-    many_to_many :cosern_accounts, CosernAccounts, join_through: "users_cosern_accounts"
+    many_to_many :cosern_accounts, CosernAccounts,
+      join_through: "users_cosern_accounts",
+      on_replace: :delete
 
     timestamps()
   end
 
   def changeset_for_actions(params \\ %{}), do: changeset_for_actions(%__MODULE__{}, params)
 
+  def changeset_for_actions(user, %{password: _password} = params) do
+    user
+    |> cast(params, [:handle, :password, :email])
+    |> validate_required([:handle, :password, :email])
+    |> unique_constraint([:handle, :email])
+    |> put_external_id()
+    |> put_password_hash()
+  end
+
   def changeset_for_actions(user, %{"password" => _password} = params) do
     user
     |> cast(params, [:handle, :password, :email])
     |> validate_required([:handle, :password, :email])
-    |> unique_constraint(:handle)
+    |> unique_constraint([:handle, :email])
     |> put_external_id()
     |> put_password_hash()
   end
@@ -37,6 +49,7 @@ defmodule PayCosern.Repo.Users do
     user
     |> cast(params, [:handle, :email])
     |> validate_required([:handle, :email])
+    |> cast_assoc(:cosern_accounts)
   end
 
   def put_external_id(changeset), do: put_change(changeset, :external_id, generate())

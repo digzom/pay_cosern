@@ -166,10 +166,10 @@ defmodule PayCosern do
   that will be inserted or updated in the database.
   """
   @spec create_users_cosern_accounts_assoc(user :: Users.t(), cosern_account_candidate :: map()) ::
-          {:ok, updated_data}
+          {:ok, updated_data :: Ecto.Changeset.t()}
   def create_users_cosern_accounts_assoc(user, cosern_account) do
-    user
-    |> PayCosern.Repo.Users.changeset(%{})
-    |> Ecto.Changeset.put_assoc(:cosern_accounts, struct(CosernAccounts, cosern_account))
+    params = %{"cosern_accounts" => [cosern_account]}
+
+    PayCosern.Repo.Users.changeset(user, params)
   end
 end
