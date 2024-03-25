@@ -1,5 +1,4 @@
 defmodule PayCosern.Repo.Users do
-  alias PayCosern.Repo
   alias PayCosern.Repo.CosernAccounts
   alias Ecto.Changeset
   use Ecto.Schema
@@ -38,7 +37,8 @@ defmodule PayCosern.Repo.Users do
     user
     |> cast(params, [:handle, :password, :email])
     |> validate_required([:handle, :password, :email])
-    |> unique_constraint([:handle, :email])
+    |> unique_constraint(:handle)
+    |> unique_constraint(:email)
     |> put_external_id()
     |> put_password_hash()
   end

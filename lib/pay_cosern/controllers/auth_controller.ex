@@ -1,5 +1,6 @@
 defmodule PayCosern.Controllers.AuthController do
   import Plug.Conn
+  require Logger
   alias PayCosern.Utils
   alias PayCosern.Repo.CosernAccounts
   alias Ecto.Changeset
@@ -31,7 +32,7 @@ defmodule PayCosern.Controllers.AuthController do
           Jason.encode!(error)
         )
 
-      %Ecto.Changeset{valid?: false} = changeset ->
+      {:error, %Ecto.Changeset{valid?: false} = changeset} ->
         errors = PayCosern.Utils.ErrorHandler.bad_request(changeset)
 
         conn
@@ -39,7 +40,7 @@ defmodule PayCosern.Controllers.AuthController do
         |> send_resp(200, Jason.encode!(%{errors: errors}))
 
       data ->
-        raise FunctionClauseError.message(data)
+        Logger.error(inspect(data))
         errors = PayCosern.Utils.ErrorHandler.internal(message: "something_bad_happened")
 
         conn
