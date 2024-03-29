@@ -44,3 +44,9 @@ config :pay_cosern, Oban,
 config :pay_cosern, PayCosern.Guardian,
   issuer: "pay_cosern",
   secret_key: System.get_env("GUARDIAN_SECRET")
+
+config :guardian, Guardian.DB,
+  repo: PayCosern.Repo,
+  schema_name: "guardian_tokens",
+  token_types: ["user_token"],
+  sweep_interval: 60

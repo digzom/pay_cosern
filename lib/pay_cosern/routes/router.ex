@@ -1,9 +1,12 @@
 defmodule PayCosern.Router do
-  alias Plug.Conn
   use Plug.Router
+
+  alias Plug.Conn
 
   plug :match
   plug :dispatch
+
+  @authenticated_routes ["/last_bill", "/bills", "/cosern_account"]
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart],
@@ -25,14 +28,14 @@ defmodule PayCosern.Router do
 
   get "/last_bill", do: to_action(PayCosern.Controllers.BillsController, :last_bill, conn)
   get "/bills", do: to_action(PayCosern.Controllers.BillsController, :bills, conn)
-  post "/sign_in", do: to_action(PayCosern.Controllers.AuthController, :create, conn)
+  post "/sign_in", do: to_action(PayCosern.Controllers.SessionController, :create, conn)
 
-  post "/service_account" do
-    to_action(PayCosern.Controllers.AuthController, :create_account, conn)
+  post "/cosern_account" do
+    to_action(PayCosern.Controllers.CosernAccountController, :create_account, conn)
   end
 
-  delete "/service_account" do
-    to_action(PayCosern.Controllers.AuthController, :delete, conn)
+  delete "/cosern_account" do
+    to_action(PayCosern.Controllers.CosernAccountController, :delete, conn)
   end
 
   post "/account" do
@@ -43,7 +46,7 @@ defmodule PayCosern.Router do
     send_resp(conn, 404, "not found")
   end
 
-  def to_action(module, action, conn) do
+  def to_action(module, action, %Plug.Conn{request_path: _path} = conn) do
     {_, body, conn} = read_body(conn)
     %Conn{params: params} = conn = fetch_query_params(conn)
 

@@ -38,16 +38,29 @@ defmodule PayCosern.Utils.ErrorHandler do
     new(500, message, %{})
   end
 
-  def get_changeset_errors(changeset) do
+  defp format_error(error) do
+    case Enum.at(error, 0) do
+      {_key, [value]} when is_binary(value) ->
+        error
+
+      _ ->
+        error
+        |> Enum.map(fn {_key, value} ->
+          Enum.filter(value, fn value -> not Enum.empty?(value) end)
+        end)
+        |> List.flatten()
+        |> Enum.reduce(%{}, fn error_map, acc ->
+          Map.merge(acc, error_map)
+        end)
+    end
+  end
+
+  defp get_changeset_errors(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
       Regex.replace(~r"%{(\w+)}", msg, fn _, key ->
         opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
       end)
     end)
-    |> Enum.map(fn {_key, value} -> Enum.filter(value, fn value -> not Enum.empty?(value) end) end)
-    |> List.flatten()
-    |> Enum.reduce(%{}, fn error_map, acc ->
-      Map.merge(acc, error_map)
-    end)
+    |> format_error()
   end
 end
