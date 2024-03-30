@@ -1,12 +1,10 @@
 defmodule PayCosern.Router do
   use Plug.Router
 
-  alias Plug.Conn
-
+  plug PayCosern.Plug.Authorize
+  plug PayCosern.Plug.OrganizeParams
   plug :match
   plug :dispatch
-
-  @authenticated_routes ["/last_bill", "/bills", "/cosern_account"]
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart],
@@ -47,18 +45,6 @@ defmodule PayCosern.Router do
   end
 
   def to_action(module, action, %Plug.Conn{request_path: _path} = conn) do
-    {_, body, conn} = read_body(conn)
-    %Conn{params: params} = conn = fetch_query_params(conn)
-
-    body = decode_body(body)
-    params = Map.merge(params, body)
-
-    apply(module, action, [conn, params])
-  end
-
-  def decode_body(body) when body in [nil, "", false], do: %{}
-
-  def decode_body(body) do
-    Jason.decode!(body)
+    apply(module, action, [conn, conn.params])
   end
 end

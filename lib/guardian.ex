@@ -1,7 +1,8 @@
 defmodule PayCosern.Guardian do
   alias PayCosern.Query.Users
   alias PayCosern.Repo
-  use Guardian, otp_app: :my_app
+
+  use Guardian, otp_app: :pay_cosern
 
   def subject_for_token(%{id: id}, _claims) do
     sub = to_string(id)
