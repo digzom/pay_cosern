@@ -11,14 +11,19 @@ defmodule PayCosern.Plug.Authorize do
     call(conn, opts, :auth)
   end
 
-  def call(%Plug.Conn{req_headers: headers}, _opts, :auth) do
-    [token] = Conn.get_req_header(conn, "authorization")
+  def call(conn, _opts), do: conn
 
-    if is_nil(token) do
+  def call(%Plug.Conn{} = conn, _opts, :auth) do
+    token = Conn.get_req_header(conn, "authorization")
+
+    IO.inspect({conn, token})
+
+    if Enum.empty?(token) do
       conn
       |> put_resp_header("content-type", "application/json")
       |> send_resp(401, "Unauthorized")
     else
+      [token] = token
       resource = PayCosern.Guardian.resource_from_token(token)
 
       conn |> assign(:user, resource)

@@ -1,5 +1,5 @@
 defmodule PayCosern.Guardian do
-  alias PayCosern.Query.Users
+  alias PayCosern.Repo.Users
   alias PayCosern.Repo
 
   use Guardian, otp_app: :pay_cosern
