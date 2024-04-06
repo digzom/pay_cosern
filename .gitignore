@@ -32,6 +32,7 @@ pay_cosern-*.tar
 paycosern-shm
 paycosern-wal
 /paycosern/
+paycosern
 
 *.db
 *.db-*

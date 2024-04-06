@@ -16,8 +16,6 @@ defmodule PayCosern.Plug.Authorize do
   def call(%Plug.Conn{} = conn, _opts, :auth) do
     token = Conn.get_req_header(conn, "authorization")
 
-    IO.inspect({conn, token})
-
     if Enum.empty?(token) do
       conn
       |> put_resp_header("content-type", "application/json")
