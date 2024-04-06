@@ -2,8 +2,9 @@ FROM elixir:latest
 
 RUN apt-get update && apt-get install -y wget unzip libnss3
 
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
+
+RUN wget http://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_123.0.6312.86-1_amd64.deb && \
+    dpkg -i google-chrome-stable_123.0.6312.86-1_amd64.deb; apt-get -fy install
 
 
 RUN wget -O - https://sh.rustup.rs | sh -s -- -y
