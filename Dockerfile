@@ -15,7 +15,8 @@ RUN wget -c https://github.com/gleam-lang/gleam/archive/refs/tags/v1.0.0.zip && 
     mv gleam-1.0.0 /usr/bin/gleam && \
     cd /usr/bin/gleam && make install
 
-RUN wget https://storage.googleapis.com/chrome-for-testing-public/121.0.6167.0/linux64/chromedriver-linux64.zip && \
+
+RUN wget https://storage.googleapis.com/chrome-for-testing-public/123.0.6312.86/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     rm chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
